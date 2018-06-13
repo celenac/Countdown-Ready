@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+
+  "name": "Timer Plugin",
+  "description": "This extension is a countdown timer",
+  "version": "1.0",
+  "author": "Celena Chang",
+
+  "browser_action": {
+   "default_icon": "favicon9.png",
+   "default_popup": "popup_startpage.html"
+  },
+
+  "background": {
+    "scripts":["background.js"],
+    "persistent":false
+  },
+
+  "permissions": [
+   "activeTab", "background", "storage"
+   ]
+}
