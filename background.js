@@ -34,9 +34,34 @@ function update() {
 			// chrome.runtime.sendMessage({datetime_data: stored_data});
 			chrome.browserAction.setPopup({popup: "popup_countingdown.html"});
 			console.log("switching to popup progress.html");
+
+			var deadline = new Date(stored_data);
+	        var now = new Date().getTime();
+	        var t = deadline - now;
+
+			chrome.alarms.create("countdown timer", {delayInMinutes: t / 60000});
 		} else {
 			chrome.browserAction.setPopup({popup: "popup_startpage.html"});
 		}
 
 	});
+}
+
+chrome.alarms.onAlarm.addListener(countdown_notification);
+
+function countdown_notification(alarm) {
+	// ALERT BOX NOTIFICATION
+	// alert("Countdown complete! \n" + (new Date()).toLocaleString() + " has arrived!" );
+
+	// CHROME NOTIFICATION
+	var options = {
+	    type:"basic",
+	    title: "Timer",
+	    message: "Timer ended (Click to dismiss)",
+	    iconUrl: "favicon9.png"
+	  }
+	  chrome.notifications.create("Countdown ended notification", options, function() {});
+	  chrome.notifications.onClicked.addListener(function() {
+	    chrome.notifications.clear("Countdown ended notification", function() {});
+	  });
 }
