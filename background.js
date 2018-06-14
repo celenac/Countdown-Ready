@@ -4,6 +4,9 @@ console.log("running background.js");
 
 update();
 
+var sound = new Audio();
+sound.src = "quite-impressed.mp3";
+
 // update everytime the storage changes (i.e. everytime a new deadline to count down to is set)
 chrome.storage.onChanged.addListener(update);
 chrome.extension.onMessage.addListener(function (request, sender, sendResponse) {
@@ -19,19 +22,10 @@ function update() {
 	chrome.storage.sync.get(["datetime", "extra_alert"], function(result) {
 		console.log("result: ", result);
 		var stored_datetime = result.datetime;
-		if (typeof stored_datetime === 'undefined') {
-			stored_datetime = null;
-			console.log("none in storage");
-			// chrome.runtime.sendMessage({msg: "create new"});
-		} else {
-			console.log(stored_datetime);
-			// chrome.runtime.sendMessage({msg: "datetime exists in storage"});
-		}
 
 		// You can then set upn the proper popup for the next click or even switch to it
-		console.log("stored data: ");
-		console.log(stored_datetime);
-		if (stored_datetime != null) {
+		console.log("stored data: ", stored_datetime);
+		if (typeof stored_datetime !== 'undefined') {
 			// chrome.runtime.sendMessage({datetime_data: stored_datetime});
 			chrome.browserAction.setPopup({popup: "popup_countingdown.html"});
 			console.log("switching to popup progress.html");
@@ -58,25 +52,32 @@ function update() {
 chrome.alarms.onAlarm.addListener(countdown_notification);
 
 function countdown_notification(alarm) {
-	console.log("alarm: ", alarm);
-	if (alarm.name === "extra alert") { 
-		console.log("display 10 sec notificaiotn");
-		// CHROME NOTIFICATION
-		var options = {
-		    type:"basic",
-		    title: "Timer",
-		    message: "10 seconds remaining (Click to dismiss)",
-		    iconUrl: "favicon9.png"
-		  }
-		  chrome.notifications.create("Countdown almost ending notification", options, function() {});
-		  chrome.notifications.onClicked.addListener(function() {
-		    chrome.notifications.clear("Countdown almost ending notification", function() {});
-		  });
-	}
+	
+	chrome.storage.sync.remove("datetime");
 
-	if (alarm.name === "countdown timer") {
-		chrome.storage.sync.get("alert_type", function(items) {
-			console.log("items: ", items);
+	chrome.storage.sync.get(["alert_type", "sound"], function(items) {
+		console.log("items: ", items);
+
+		if (items["sound"] == "on") {
+			sound.play();
+		}
+		
+		if (alarm.name === "extra alert") { 
+			console.log("display 10 sec notificaiotn");
+			// CHROME NOTIFICATION
+			var options = {
+			    type:"basic",
+			    title: "Timer",
+			    message: "10 seconds remaining (Click to dismiss)",
+			    iconUrl: "favicon9.png"
+			  }
+			  chrome.notifications.create("Countdown almost ending notification", options, function() {});
+			  chrome.notifications.onClicked.addListener(function() {
+			    chrome.notifications.clear("Countdown almost ending notification", function() {});
+			  });
+		}
+
+		if (alarm.name === "countdown timer") {
 			if (items["alert_type"] == "alert") {
 				// ALERT BOX NOTIFICATION
 				alert("Countdown complete! \n" + (new Date()).toLocaleString() + " has arrived!" );
@@ -94,8 +95,9 @@ function countdown_notification(alarm) {
 				  });
 			}
 			
-		});
-	}
-	
-	
+		}
+		
+	});
+
+		
 }

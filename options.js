@@ -1,10 +1,16 @@
 console.log("running options.js");
 
+var sound = new Audio();
+sound.src = "quite-impressed.mp3";
+
 // Add listener after whole HTML document has been loaded
 document.addEventListener('DOMContentLoaded', function() {
 	console.log("DOMcontentedLoaded");
 	displaySettings();
 	document.getElementById("save_btn").addEventListener("click", saveSettings);  
+	document.querySelector('input[name="sound"][value="on"]').addEventListener("click", function() {
+		sound.play();
+	});
 });
 
 
@@ -12,7 +18,8 @@ function displaySettings() {
 	// Use default values "alert" and "no"
 	default_settings = {
 		alert_type: "alert",
-		extra_alert: "no" 
+		extra_alert: "no",
+		sound: "on"
 	};
 	chrome.storage.sync.get(default_settings, function(items) {
 		if (items["alert_type"] == "alert") {
@@ -25,8 +32,14 @@ function displaySettings() {
 			document.querySelector('input[name="extra_alert"][value="yes"]').checked = true;
 		} else {
 			document.querySelector('input[name="extra_alert"][value="no"]').checked = true;
-
 		}
+
+		if (items["sound"] == "on") {
+			document.querySelector('input[name="sound"][value="on"]').checked = true;
+		} else {
+			document.querySelector('input[name="sound"][value="off"]').checked = true;
+		}
+
 	});
 }
 
@@ -36,9 +49,13 @@ function saveSettings() {
 	var alert_type_value = document.querySelector('input[name="alert_type"]:checked').value;
 	var extra_alert_value = document.querySelector('input[name="extra_alert"]:checked').value;
 	console.log("alert type: ", alert_type_value);
+	var sound_value = document.querySelector('input[name="sound"]:checked').value;
+
 	chrome.storage.sync.set({
 		alert_type : alert_type_value,
-		extra_alert: extra_alert_value
+		extra_alert: extra_alert_value,
+		sound: sound_value
 	});
 	document.getElementById("save_confirmation").innerHTML = "Settings saved";
 }
+
