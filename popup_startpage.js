@@ -50,7 +50,7 @@ function startTimer(deadline) {
 	var t = deadline - now;
 
 	if (t > 0) {
-		chrome.storage.local.set({datetime: deadline.toString()});
+		chrome.storage.sync.set({datetime: deadline.toString()});
 
 		var x = setInterval(function() {
 			var now = new Date().getTime(); 	// needed for dynamically showing countdown
@@ -72,7 +72,7 @@ function startTimer(deadline) {
 			if (t < 0) {
 				clearInterval(x);
 				document.getElementById("countdown_display").innerHTML = "EXPIRED";
-				chrome.storage.local.clear();
+				chrome.storage.sync.remove("datetime");
 			}
 		}, 1000);
 	} else {

@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Timer Settings</title>
+    <script src="options.js"></script>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <h1>Timer Settings</h1>
+    
+    <h2>Alert type</h2>
+    <input type="radio" value="alert" name="alert_type"><label>Alert box pop-up</label>
+    <input type="radio" value="notification" name="alert_type"><label>Notification</label>
+
+    
+    <h2>Countdown alerts</h2>
+    <p>Alert when 10 seconds remianing?</p>
+    <input type="radio" value="yes" name="extra_alert"><label>Yes</label>
+    <input type="radio" value="no" name="extra_alert"><label>No</label>
+
+
+    <p><button id="save_btn">Save settings</button></p>
+
+    <p id = "save_confirmation"></p>
+
+  </body>
+</html>

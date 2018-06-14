@@ -15,31 +15,39 @@ chrome.extension.onMessage.addListener(function (request, sender, sendResponse) 
 function update() {
 	console.log("something in storage changed");
 
-	var stored_data;
-	chrome.storage.local.get(["datetime"], function(result) {
-		var stored_data = result.datetime;
-		if (typeof stored_data === 'undefined') {
-			stored_data = null;
+	var stored_datetime;
+	chrome.storage.sync.get(["datetime", "extra_alert"], function(result) {
+		console.log("result: ", result);
+		var stored_datetime = result.datetime;
+		if (typeof stored_datetime === 'undefined') {
+			stored_datetime = null;
 			console.log("none in storage");
 			// chrome.runtime.sendMessage({msg: "create new"});
 		} else {
-			console.log(stored_data);
+			console.log(stored_datetime);
 			// chrome.runtime.sendMessage({msg: "datetime exists in storage"});
 		}
 
 		// You can then set upn the proper popup for the next click or even switch to it
 		console.log("stored data: ");
-		console.log(stored_data);
-		if (stored_data != null) {
-			// chrome.runtime.sendMessage({datetime_data: stored_data});
+		console.log(stored_datetime);
+		if (stored_datetime != null) {
+			// chrome.runtime.sendMessage({datetime_data: stored_datetime});
 			chrome.browserAction.setPopup({popup: "popup_countingdown.html"});
 			console.log("switching to popup progress.html");
 
-			var deadline = new Date(stored_data);
+			var deadline = new Date(stored_datetime);
 	        var now = new Date().getTime();
 	        var t = deadline - now;
 
 			chrome.alarms.create("countdown timer", {delayInMinutes: t / 60000});
+
+			// set 10 seconds remaining notification
+			if (result.extra_alert === "yes" && t > (10 * 1000)) {
+				console.log("10 sec warming created");
+				chrome.alarms.create("extra alert", {delayInMinutes: (t - (10 * 1000)) / 60000});
+			}
+
 		} else {
 			chrome.browserAction.setPopup({popup: "popup_startpage.html"});
 		}
@@ -50,18 +58,44 @@ function update() {
 chrome.alarms.onAlarm.addListener(countdown_notification);
 
 function countdown_notification(alarm) {
-	// ALERT BOX NOTIFICATION
-	// alert("Countdown complete! \n" + (new Date()).toLocaleString() + " has arrived!" );
+	console.log("alarm: ", alarm);
+	if (alarm.name === "extra alert") { 
+		console.log("display 10 sec notificaiotn");
+		// CHROME NOTIFICATION
+		var options = {
+		    type:"basic",
+		    title: "Timer",
+		    message: "10 seconds remaining (Click to dismiss)",
+		    iconUrl: "favicon9.png"
+		  }
+		  chrome.notifications.create("Countdown almost ending notification", options, function() {});
+		  chrome.notifications.onClicked.addListener(function() {
+		    chrome.notifications.clear("Countdown almost ending notification", function() {});
+		  });
+	}
 
-	// CHROME NOTIFICATION
-	var options = {
-	    type:"basic",
-	    title: "Timer",
-	    message: "Timer ended (Click to dismiss)",
-	    iconUrl: "favicon9.png"
-	  }
-	  chrome.notifications.create("Countdown ended notification", options, function() {});
-	  chrome.notifications.onClicked.addListener(function() {
-	    chrome.notifications.clear("Countdown ended notification", function() {});
-	  });
+	if (alarm.name === "countdown timer") {
+		chrome.storage.sync.get("alert_type", function(items) {
+			console.log("items: ", items);
+			if (items["alert_type"] == "alert") {
+				// ALERT BOX NOTIFICATION
+				alert("Countdown complete! \n" + (new Date()).toLocaleString() + " has arrived!" );
+			} else { // otherwise, show notification that countdown expired
+				// CHROME NOTIFICATION
+				var options = {
+				    type:"basic",
+				    title: "Timer",
+				    message: "Timer ended (Click to dismiss)",
+				    iconUrl: "favicon9.png"
+				  }
+				  chrome.notifications.create("Countdown ended notification", options, function() {});
+				  chrome.notifications.onClicked.addListener(function() {
+				    chrome.notifications.clear("Countdown ended notification", function() {});
+				  });
+			}
+			
+		});
+	}
+	
+	
 }

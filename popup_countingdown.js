@@ -10,7 +10,7 @@ function callback(changes, type_of_storage) {
 }
 
 function update() {
-  chrome.storage.local.get(["datetime"], function(result) {
+  chrome.storage.sync.get(["datetime"], function(result) {
     var stored_data = result.datetime;
     if (typeof stored_data === 'undefined') {
       stored_data = null;
@@ -33,7 +33,7 @@ function update() {
           if (t < 0) {
               clearInterval(x);
               document.getElementById("expired").innerHTML = "EXPIRED";
-              chrome.storage.local.clear();
+              chrome.storage.sync.remove("datetime");
           }
       }, 1000);
     }
@@ -49,7 +49,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function resetTimer() {
   console.log("clicked reset");
-  chrome.storage.local.clear();
+  chrome.storage.sync.remove("datetime");
+  chrome.alarms.clearAll(function() {});
   // var backgroundpage = chrome.extension.getBackgroundPage();
   // backgroundpage.update();
   // chrome.browserAction.setPopup({popup: "popup.html"});
@@ -62,5 +63,4 @@ function resetTimer() {
   document.getElementById("reset_confirmation").innerHTML = "Reset confirmed! <br>Refresh to start a new countdown.<br>";
   
 }
-
 
