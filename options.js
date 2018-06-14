@@ -11,7 +11,23 @@ document.addEventListener('DOMContentLoaded', function() {
 	document.querySelector('input[name="sound"][value="on"]').addEventListener("click", function() {
 		sound.play();
 	});
+	document.querySelector('input[name="alert_type"][value="alert"]').addEventListener("click", function() {
+		alert("Pop-up alert box example:\nCountdown complete! \n" + (new Date()).toLocaleString() + " has arrived!" );
+	});
+	document.querySelector('input[name="alert_type"][value="notification"]').addEventListener("click", function() {
+		var options = {
+		    type:"basic",
+		    title: "Timer",
+		    message: "Side notification example:\nTimer ended (Click to dismiss)",
+		    iconUrl: "favicon9.png"
+		  }
+		  chrome.notifications.create("Countdown ended notification", options, function() {});
+		  chrome.notifications.onClicked.addListener(function() {
+		    chrome.notifications.clear("Countdown ended notification", function() {});
+		  });
+	});
 });
+
 
 
 function displaySettings() {
