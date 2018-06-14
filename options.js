@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		    type:"basic",
 		    title: "Timer",
 		    message: "Side notification example:\nTimer ended (Click to dismiss)",
-		    iconUrl: "favicon9.png"
+		    iconUrl: "favicons/clock2.png"
 		  }
 		  chrome.notifications.create("Countdown ended notification", options, function() {});
 		  chrome.notifications.onClicked.addListener(function() {

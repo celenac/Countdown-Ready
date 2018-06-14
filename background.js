@@ -69,7 +69,7 @@ function countdown_notification(alarm) {
 			    type:"basic",
 			    title: "Timer",
 			    message: "10 seconds remaining (Click to dismiss)",
-			    iconUrl: "favicon9.png"
+			    iconUrl: "favicons/clock2.png"
 			  }
 			  chrome.notifications.create("Countdown almost ending notification", options, function() {});
 			  chrome.notifications.onClicked.addListener(function() {
@@ -87,7 +87,7 @@ function countdown_notification(alarm) {
 				    type:"basic",
 				    title: "Timer",
 				    message: "Timer ended (Click to dismiss)",
-				    iconUrl: "favicon9.png"
+				    iconUrl: "favicons/clock2.png"
 				  }
 				  chrome.notifications.create("Countdown ended notification", options, function() {});
 				  chrome.notifications.onClicked.addListener(function() {
