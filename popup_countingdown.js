@@ -19,8 +19,7 @@ function update() {
       console.log("data exists in storage");
       console.log(stored_data);
       var deadline = new Date(stored_data);
-        // chrome.storage.sync.set({datetime: msg.datetime});
-        // chrome.runtime.sendMessage({datetime: input_datetime});
+    
       var x = setInterval(function() {
           var now = new Date().getTime();
           var t = deadline - now;
