@@ -8,23 +8,24 @@
   </head>
   <body>
     <h1>Timer</h1>
-    <!-- <button id="checkPage">Check this page now!</button> -->
     
     <div id = "event_countdown_mode" style="display: block;">
-      <h3> Countdown mode </h3>
-      <p> Pick a date and time to count down to</p>
+      <h3> COUNTDOWN MODE </h3>
+      <h4> Input a date and time to count down to</h4>
       <input id="datetime" type="datetime-local" required>
     </div>
 
     <div id ="timer_mode" style="display: none;">
-      <h3> Timer mode </h3>
-      <p> Input the length of the timer</p>
-      <input id="time_value" type="number" style="width: 50px" required> 
+      <h3> TIMER MODE </h3>
+      <h4> Input the timer duration</h4>
+      <input id="time_value" type="number" required> 
       <select id = "time_measure">
         <option>minutes</option>
         <option>hours</option>
       </select>
     </div>
+
+    <p id="error_msg"></p>
 
     <button id="switch_mode" class = "push_button blue"> Switch mode</button>
 

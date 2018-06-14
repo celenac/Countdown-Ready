@@ -21,7 +21,7 @@ function validateInputs() {
 			var deadline = new Date(datetime_input);
 			startTimer(deadline);
 		} else { 
-			alert("Please enter a valid date and time!");
+			document.getElementById("error_msg").innerHTML = "Please enter a valid date and time";
 		}
 	} else { // otherwise, we are in timer mode
 	  	var time_value_input = document.getElementById("time_value").value;
@@ -36,7 +36,7 @@ function validateInputs() {
 			}    
 			startTimer(deadline);
 		} else { 
-			alert("Please enter a valid time duration!");
+			document.getElementById("error_msg").innerHTML = "Please enter a valid date and time";
 		}
 	}
 }
@@ -45,12 +45,16 @@ function validateInputs() {
 function startTimer(deadline) {
 	console.log("start timer");
 
-	var now = new Date().getTime();
+	// Info to calculate is input date/time is valid (is not a past date/time)
+	var now = new Date().getTime(); 
 	var t = deadline - now;
+
 	if (t > 0) {
 		chrome.storage.local.set({datetime: deadline.toString()});
 
 		var x = setInterval(function() {
+			var now = new Date().getTime(); 	// needed for dynamically showing countdown
+			var t = deadline - now; 			// ""
 			var days = Math.floor(t / (1000 * 60 * 60 * 24));
 			var hours = Math.floor((t % (1000 * 60 * 60 * 24))/(1000 * 60 * 60));
 			var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
@@ -68,16 +72,19 @@ function startTimer(deadline) {
 			if (t < 0) {
 				clearInterval(x);
 				document.getElementById("countdown_display").innerHTML = "EXPIRED";
+				chrome.storage.local.clear();
 			}
 		}, 1000);
 	} else {
-		alert("Invalid date and time: input must be a future date and time");
+		document.getElementById("error_msg").innerHTML = "Invalid date and time:<br>Input must be a future date and time";
 	}
 }
 
 
 // Source: https://stackoverflow.com/questions/35501515/switching-between-two-div-elements-using-javascript
 function switchMode() {
+	document.getElementById("error_msg").innerHTML = "";
+
 	var event_countdown_mode = document.getElementById("event_countdown_mode");
 	var timer_mode = document.getElementById("timer_mode"); 
 

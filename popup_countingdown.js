@@ -32,7 +32,8 @@ function update() {
           document.getElementById("deadline").innerHTML = "Count down to: " + deadline.toLocaleString();
           if (t < 0) {
               clearInterval(x);
-              document.getElementById("demo").innerHTML = "EXPIRED";
+              document.getElementById("expired").innerHTML = "EXPIRED";
+              chrome.storage.local.clear();
           }
       }, 1000);
     }
