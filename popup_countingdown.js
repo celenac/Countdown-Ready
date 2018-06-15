@@ -34,7 +34,6 @@ function update() {
               clearInterval(x);
               document.getElementById("expired").innerHTML = "EXPIRED";
               chrome.storage.sync.remove("datetime");
-              chrome.alarms.clearAll(function() {});
           }
       }, 1000);
     }
